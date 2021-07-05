@@ -1,9 +1,9 @@
 package model;
 import java.io.Serializable;
 
-public class Login implements Serializable{
-	public String mail;
-	public String pass;
+public class Login implements Serializable{ //ログイン時入力情報インスタンス
+	public String mail; //ログイン時メールアドレス
+	public String pass; //ログインパスワード
 	
 	public Login() {}
 	public Login(String mail, String pass) {

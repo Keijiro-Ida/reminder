@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import model.Goal;
 import model.PostGoal;
 import model.PostGoalLogic;
 
@@ -30,9 +31,9 @@ public class PostGoalLogicTest {
 		
 		PostGoal postGoal = new PostGoal("5", "ありがとうを３回言う", current, remindTime);
 		PostGoalLogic bo = new PostGoalLogic();
-		boolean result = bo.execute(postGoal);
+		Goal goal= bo.execute(postGoal);
 		
-		if(result) {
+		if(goal != null) {
 			System.out.println("testExecute1:成功");
 		} else {
 			System.out.println("testExecute1:失敗");
@@ -46,9 +47,9 @@ public class PostGoalLogicTest {
 			Timestamp ts = Timestamp.valueOf(time);
 			PostGoal postGoal = new PostGoal("3", "ありがとうを３回言う",ts, current);
 			PostGoalLogic bo = new PostGoalLogic();
-			boolean result = bo.execute(postGoal);
+			Goal goal = bo.execute(postGoal);
 			
-			if(result) {
+			if(goal != null) {
 				System.out.println("testExecute2:成功");
 			} else {
 				System.out.println("testExecute2:失敗");

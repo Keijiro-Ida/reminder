@@ -2,12 +2,12 @@ package model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class Goal implements Serializable {
-	private String usrId;
-	private String goalId;
-	private String text;
-	private Timestamp goalTime;
-	private Timestamp remindTime;
+public class Goal implements Serializable { //目標
+	private String usrId; //ユーザーID
+	private String goalId; //目標ID
+	private String text; //テキスト
+	private Timestamp goalTime; //登録時刻
+	private Timestamp remindTime; //リマインド時刻設定
 	
 	public Goal() {}
 	public Goal(String usrId, String goalId, String text, 

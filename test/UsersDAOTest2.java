@@ -1,4 +1,6 @@
 package test;
+import java.time.LocalTime;
+
 import DAO.UsersDAO;
 import model.SignUp;;
 
@@ -9,7 +11,8 @@ public class UsersDAOTest2 {
 	}
 	
 	public static void testSignUpUsers1() {
-		SignUp signUp = new SignUp("idatt1122@yahoo.co.jp", "11221118");
+		LocalTime now = LocalTime.now();
+		SignUp signUp = new SignUp("idatt1122@yahoo.co.jp", "11221118", now);
 		UsersDAO dao = new UsersDAO();
 		int result = dao.createUsers(signUp);
 		if(result == 1) {
@@ -20,7 +23,8 @@ public class UsersDAOTest2 {
 	}
 	
 	public static void testSignUpUsers2() {
-		SignUp signIn = new SignUp("idatt1122@gmail.com", "11221118");
+		LocalTime now = LocalTime.now();
+		SignUp signIn = new SignUp("idatt1122@gmail.com", "11221118", now);
 		UsersDAO dao = new UsersDAO();
 		int result = dao.createUsers(signIn);
 		if(result != 1) {

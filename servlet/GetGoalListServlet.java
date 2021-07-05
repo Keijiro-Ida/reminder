@@ -19,7 +19,7 @@ import model.Users;
  * Servlet implementation class GetGoalListServlet
  */
 @WebServlet("/GetGoalListServlet")
-public class GetGoalListServlet extends HttpServlet {
+public class GetGoalListServlet extends HttpServlet { //目標の履歴表示 1ページ目
 	private static final long serialVersionUID = 1L;
 
 	
@@ -27,12 +27,11 @@ public class GetGoalListServlet extends HttpServlet {
 		HttpSession sessionUser = request.getSession();
 		Users users = (Users) sessionUser.getAttribute("users");
 		
-		String action = request.getParameter("action");
 		
-		GetGoalListLogic bo = new GetGoalListLogic();
+		GetGoalListLogic bo = new GetGoalListLogic(); //履歴リストを獲得
 		List<Goal> goalList = bo.execute(users);
 		
-		HttpSession session = request.getSession();
+		HttpSession session = request.getSession(); //リストをセッションスコープに格納
 		session.setAttribute("goalList", goalList);
 		
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/goalList.jsp");

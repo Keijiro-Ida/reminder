@@ -8,23 +8,16 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
- * Servlet implementation class LogoutServlet
+ * Servlet implementation class GoalList2
  */
-@WebServlet("/LogoutServlet")
-public class LogoutServlet extends HttpServlet { //ログアウト動作
+@WebServlet("/GoalList2")
+public class GoalList2 extends HttpServlet { //履歴の２ページ目
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
+       
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		session.invalidate(); //セッションスコープの情報を破棄
-		
-		RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/logout.jsp");
+		RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/goalList2.jsp");
 		dispatcher.forward(request, response);
 	}
 

@@ -18,20 +18,20 @@ import model.Users;
  * Servlet implementation class LoginServlet
  */
 @WebServlet("/LoginServlet")
-public class LoginServlet extends HttpServlet {
+public class LoginServlet extends HttpServlet { //ログインの遷移
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String mail = request.getParameter("mail");
-		String pass = request.getParameter("pass");
+		String mail = request.getParameter("mail"); //入力メールアドレスの獲得
+		String pass = request.getParameter("pass"); //入力パスワードの獲得
 		Login login = new Login(mail, pass);
 		LoginLogic bo = new LoginLogic();
 		Users users = bo.execute(login);
 		
-		if(users != null) {
+		if(users != null) { //ユーザー情報確認OK時はセッションスコープに格納
 			HttpSession session = request.getSession();
 			session.setAttribute("users", users);
 		} 

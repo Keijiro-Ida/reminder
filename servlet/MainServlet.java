@@ -6,7 +6,6 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -16,17 +15,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import model.Goal;
 import model.PostGoal;
 import model.PostGoalLogic;
 import model.Remind;
-import model.RemindGoalLogic;
+import model.RemindLogic;
 import model.Users;
 
 /**
  * Servlet implementation class MainServlet
  */
 @WebServlet("/MainServlet")
-public class MainServlet extends HttpServlet {
+public class MainServlet extends HttpServlet { //メイン画面
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -41,14 +41,15 @@ public class MainServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String text = request.getParameter("text");
-		String time = request.getParameter("remindTime");
+		String text = request.getParameter("text"); //入力テキストを獲得
+		String time = request.getParameter("remindTime"); //リマインド時刻の獲得
 		text = text.strip();
-		if(text.equals("") || time.equals("")) {
-			request.setAttribute("errorMsg", "入力値エラー");
+		PostGoal postGoal = null;
+		if(text.equals("") || time.equals("")) { //テキスト入力がない場合
+			request.setAttribute("errorMsg", "テキストが入力されていません。");
 			RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/error.jsp");
 			dispatcher.forward(request, response);
-		} else {
+		} else { //テキスト入力ある場合
 			LocalDate today = LocalDate.now();
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 			String datetime = dtf.format(today) + " " + time;
@@ -56,38 +57,35 @@ public class MainServlet extends HttpServlet {
 			LocalDateTime remindLocalTime = LocalDateTime.parse(datetime,dtf2);
 			Timestamp remindTime = Timestamp.valueOf(remindLocalTime);
 			Timestamp goalTime = new Timestamp(System.currentTimeMillis());
+			
+			HttpSession session = request.getSession();
+			Users users = (Users)session.getAttribute("users");
 		
-			if(remindTime.before(goalTime)) {
-				request.setAttribute("errorMsg", "エラー：リマインド時刻が現在より早い時刻となっています。");
-				RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/error.jsp");
+			if(remindTime.before(goalTime)) { //現在時刻よりもリマインド時刻が早い場合は明日の設定
+				LocalDate tomorrow = today.plusDays(1);
+				String tomorrowTime = dtf.format(tomorrow) + " " + time;
+				LocalDateTime tomorrowDateTime = LocalDateTime.parse(tomorrowTime, dtf2);
+				remindTime = Timestamp.valueOf(tomorrowDateTime);
+			} 
+			postGoal = new PostGoal(users.getUsrId(), text, goalTime, remindTime);
+			PostGoalLogic bo = new PostGoalLogic();
+			Goal goal = bo.execute(postGoal);
+				
+			if(goal != null) { //目標の登録成功時
+				//リマインド通知の設定
+				Remind remind = new Remind(goal.getGoalId(), users.getMail(), text, remindTime); 
+				RemindLogic bo2 = new RemindLogic(remind);
+				bo2.execute();
+					
+				
+				
+				RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/mainResult.jsp");
 				dispatcher.forward(request, response);
 			} else {
-				HttpSession session = request.getSession();
-				Users users = (Users)session.getAttribute("users");
-				PostGoal postGoal = new PostGoal(users.getUsrId(), text, goalTime, remindTime);
-		
-				PostGoalLogic bo = new PostGoalLogic();
-				boolean result = bo.execute(postGoal);
-				if(result) {
-			
-			//remindの送信を追記
-					Date remindDate = new Date(remindTime.getTime());
-					Remind remind = new Remind(users.getMail(), text, remindDate);
-					RemindGoalLogic bo2 = new RemindGoalLogic();
-					bo2.execute(remind);
-				
-					RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/mainResult.jsp");
-					dispatcher.forward(request, response);
-				} else {
-					request.setAttribute("errorMsg", "登録に失敗しました。");
-					RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/error.jsp");
-					dispatcher.forward(request, response);
-			//エラーのときの画面
-				}
+				request.setAttribute("errorMsg", "登録に失敗しました。"); //エラー時の画面
+				RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/error.jsp");
+				dispatcher.forward(request, response);
 			}
-			
 		}
 	}
-	
-	
 }

@@ -1,6 +1,8 @@
 package servlet;
 
 import java.io.IOException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -17,7 +19,7 @@ import model.Users;
  * Servlet implementation class UpdateUsersServlet
  */
 @WebServlet("/UpdateUsersServlet")
-public class UpdateUsersServlet extends HttpServlet {
+public class UpdateUsersServlet extends HttpServlet { //ユーザー情報の変更
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -32,31 +34,38 @@ public class UpdateUsersServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String newMail = request.getParameter("mail");
-		String newPass = request.getParameter("pass");
-		String newPass2 = request.getParameter("pass2");
+		String newMail = request.getParameter("mail"); //新メールアドレス
+		String newPass = request.getParameter("pass"); //新パスワード
+		String newPass2 = request.getParameter("pass2"); //新パスワード再入力
+		String time = request.getParameter("defTime"); //デフォルト時刻設定
+		LocalTime defTime = LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"));
+		
 		newPass.strip();
-		newPass.strip();
+		newPass2.strip();
 		if(!(newPass.equals(newPass2)) || 
-					newPass.length() != 8){
-			request.setAttribute("errorMsg", "パスワードエラーです。");
+					newPass.length() != 8){ //入力パスワードに間違いがあった場合
+			request.setAttribute("errorMsg", "パスワードの入力エラーです。");
 			RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/error.jsp");
 			dispatcher.forward(request, response);
-		} else {
+		} else { //入力情報に間違いがない場合に登録情報の変更
 			HttpSession session = request.getSession();
 			Users users = (Users) session.getAttribute("users");
 			users.setMail(newMail);
 			users.setPass(newPass);
+			users.setDefTime(defTime);
 			UpdateUsersLogic bo = new UpdateUsersLogic();
-			boolean result = bo.execute(users);
-			if(result) {
-				//更新成功
+			int result = bo.execute(users);
+			if(result == 1) { //更新成功
 				HttpSession session2 = request.getSession();
 				session2.setAttribute("users", users);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/updateOK.jsp");
 				dispatcher.forward(request, response);
-			} else {
+			} else if(result == 0){ //登録失敗
 				request.setAttribute("errorMsg", "登録に失敗しました。");
+				RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/error.jsp");
+				dispatcher.forward(request, response);
+			} else { //データベースのエラー
+				request.setAttribute("errorMsg", "システムエラーです。");
 				RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/error.jsp");
 				dispatcher.forward(request, response);
 			}

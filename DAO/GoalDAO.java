@@ -32,11 +32,37 @@ public class GoalDAO {
 			
 		}catch(SQLException e) {
 			e.printStackTrace();
-			return result;
+			return -1;
 		}
 		return result;
 	}
 	
+	public Goal findGoal(PostGoal postGoal) {
+		
+		try(Connection conn = DriverManager.getConnection(JDBC_URL,DB_USER,DB_PASS)){
+			String sql = "SELECT * FROM GOAL WHERE USRID=? AND TEXT = ? AND GOALTIME = ? AND REMINDTIME = ?";
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, postGoal.getUsrId());
+			pstmt.setString(2,  postGoal.getText());
+			pstmt.setTimestamp(3, postGoal.getGoalTime());
+			pstmt.setTimestamp(4,  postGoal.getRemindTime());
+			ResultSet rs = pstmt.executeQuery();
+			while(rs.next()) {
+				String usrId = rs.getString("USRID");
+				String goalId = rs.getString("GOALID");
+				String text = rs.getString("TEXT");
+				Timestamp goalTime = rs.getTimestamp("GOALTIME");
+				Timestamp remindTime = rs.getTimestamp("REMINDTIME");
+				
+				Goal goal = new Goal(usrId, goalId, text, goalTime, remindTime);
+				return goal;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return null;
+	}
 	
 	public List<Goal> findAll(Users users) {
 		List<Goal> goalList = new ArrayList<>();
@@ -57,7 +83,7 @@ public class GoalDAO {
 				Goal goal = new Goal(usrId, goalId, text, goalTime, remindTime);
 				goalList.add(goal);
 				i++;
-				if(i == 10) break;
+				if(i == 15) break; //目標は15個まで保持
 			
 			}
 		} catch (SQLException e) {
@@ -78,7 +104,7 @@ public class GoalDAO {
 			
 		} catch(SQLException e) {
 			e.printStackTrace();
-			return result;
+			return -1;
 		}
 	}
 	
@@ -92,11 +118,11 @@ public class GoalDAO {
 			pstmt.setString(3, goal.getGoalId());
 			
 			result = pstmt.executeUpdate();
-			return result;
+			return result; //1が登録成功、0が失敗
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return result;
+			return -1; //-1でデータベースのエラー
 		}
 	}
 }
