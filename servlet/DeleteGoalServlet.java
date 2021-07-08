@@ -23,6 +23,7 @@ public class DeleteGoalServlet extends HttpServlet { //設定した目標の削�
 
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		HttpSession session = request.getSession();
 		Goal goal = (Goal) session.getAttribute("goal");
 		DeleteGoalLogic bo = new DeleteGoalLogic();
