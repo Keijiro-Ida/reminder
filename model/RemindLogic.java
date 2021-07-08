@@ -3,6 +3,7 @@ package model;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -40,26 +41,28 @@ public class RemindLogic { //リマインド通知を行うクラス
 				      property.put("mail.smtp.port", "587"
 				      		+ "");
 				      property.put("mail.smtp.debug", "true");
+				      ResourceBundle bundle = ResourceBundle.getBundle("properties.mail");//リマインド配信元の情報を取得
+				      
 				      Session session = Session.getInstance(property, new javax.mail.Authenticator() {
 				        protected PasswordAuthentication getPasswordAuthentication() {
-				          return new PasswordAuthentication("reminderappcenter@gmail.com", "");
+				          return new PasswordAuthentication(bundle.getString("mail"), bundle.getString("pass")); 
 				        }
 				      });
 				      
 				      MimeMessage mimeMessage = new MimeMessage(session);
-				      InternetAddress toAddress = new InternetAddress(remind.getMail());
+				      InternetAddress toAddress = new InternetAddress(remind.getMail()); //送信先
 				      mimeMessage.setRecipient(Message.RecipientType.TO, toAddress);
-				      InternetAddress fromAddress = new InternetAddress("reminderappcenter@gmail.com");
+				      InternetAddress fromAddress = new InternetAddress(bundle.getString("mail")); //送信元
 				      mimeMessage.setFrom(fromAddress);
-				      mimeMessage.setSubject(remind.getText(), "ISO-2022-JP");
-				      mimeMessage.setText(remind.getText(), "ISO-2022-JP");
+				      mimeMessage.setSubject(remind.getText(), "ISO-2022-JP"); //タイトル
+				      mimeMessage.setText(remind.getText(), "ISO-2022-JP"); //本文
 				      mimeMessage.setText("--Sent with reminder App--", "ISO-2022-JP");
-				      Transport.send(mimeMessage);
+				      Transport.send(mimeMessage); //メール送信
 				    } catch (MessagingException e) {
 				      e.printStackTrace();
 				    }
 			};
-			Timestamp now = new Timestamp(System.currentTimeMillis());
+			Timestamp now = new Timestamp(System.currentTimeMillis()); //現在時刻
 			long time = remind.getRemindTime().getTime() - now.getTime(); //リマインド時刻と現在時刻の差分
 			try {
 				sf = service.schedule(task1, time, TimeUnit.MILLISECONDS); //リマインドを設定
