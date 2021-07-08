@@ -6,20 +6,25 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalTime;
+import java.util.ResourceBundle;
 
 import model.Login;
 import model.SignUp;
 import model.Users;
 
 public class UsersDAO {
-	private final String JDBC_URL = "jdbc:h2:tcp://localhost/~/reminder";
-	private final String DB_USER = "sa";
-	private final String DB_PASS = "";
+	
+	ResourceBundle bundle = ResourceBundle.getBundle("properties.database");
+	//データベースの情報を取得
 	
 	public Users findByLogin(Login login) {
 		Users users = null;
 		
-		try(Connection conn = DriverManager.getConnection(JDBC_URL,DB_USER,DB_PASS)){
+		try(Connection conn = DriverManager.getConnection(
+				bundle.getString("JDBC_URL"),
+					bundle.getString("DB_USER"),
+						bundle.getString("DB_PASS"))){
+
 			String sql = "SELECT USRID, MAIL, PASS, DEFTIME FROM USERS WHERE MAIL = ? AND PASS = ?";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, login.getMail());
@@ -44,7 +49,11 @@ public class UsersDAO {
 		
 		int result = 0;
 		
-		try(Connection conn = DriverManager.getConnection(JDBC_URL,DB_USER,DB_PASS)){
+		try(Connection conn = DriverManager.getConnection(
+				bundle.getString("JDBC_URL"),
+					bundle.getString("DB_USER"),
+						bundle.getString("DB_PASS"))){
+
 			String sql = "INSERT INTO USERS(MAIL, PASS, DEFTIME) VALUES ( ?, ?, ?)";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, signUp.getMail());
@@ -63,7 +72,11 @@ public class UsersDAO {
 	
 	public int updateUsers(Users users) {
 		int result = 0;
-		try(Connection conn = DriverManager.getConnection(JDBC_URL,DB_USER,DB_PASS)){
+		try(Connection conn = DriverManager.getConnection(
+				bundle.getString("JDBC_URL"),
+					bundle.getString("DB_USER"),
+						bundle.getString("DB_PASS"))){
+			
 			String sql = "UPDATE USERS SET MAIL = ? , PASS = ?, DEFTIME = ? WHERE USRID = ?";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, users.getMail());

@@ -7,19 +7,22 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import model.Goal;
 import model.PostGoal;
 import model.Users;
 public class GoalDAO {
-	private final String JDBC_URL = "jdbc:h2:tcp://localhost/~/reminder";
-	private final String DB_USER = "sa";
-	private final String DB_PASS = "";
+	ResourceBundle bundle = ResourceBundle.getBundle("properties.database");
+	//データベースの情報を取得
 	
 	public int goalCreate(PostGoal postGoal) {
 		int result = 0;
 		
-		try(Connection conn = DriverManager.getConnection(JDBC_URL,DB_USER,DB_PASS)){
+		try(Connection conn = DriverManager.getConnection(
+								bundle.getString("JDBC_URL"),
+									bundle.getString("DB_USER"),
+										bundle.getString("DB_PASS"))){
 			
 			String sql = "INSERT INTO GOAL(USRID,TEXT,GOALTIME,REMINDTIME) VALUES(?, ?, ?, ?)";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -38,8 +41,11 @@ public class GoalDAO {
 	}
 	
 	public Goal findGoal(PostGoal postGoal) {
-		
-		try(Connection conn = DriverManager.getConnection(JDBC_URL,DB_USER,DB_PASS)){
+		try(Connection conn = DriverManager.getConnection(
+				bundle.getString("JDBC_URL"),
+					bundle.getString("DB_USER"),
+						bundle.getString("DB_PASS"))){
+
 			String sql = "SELECT * FROM GOAL WHERE USRID=? AND TEXT = ? AND GOALTIME = ? AND REMINDTIME = ?";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, postGoal.getUsrId());
@@ -66,8 +72,11 @@ public class GoalDAO {
 	
 	public List<Goal> findAll(Users users) {
 		List<Goal> goalList = new ArrayList<>();
-		
-		try(Connection conn = DriverManager.getConnection(JDBC_URL,DB_USER,DB_PASS)){
+		try(Connection conn = DriverManager.getConnection(
+				bundle.getString("JDBC_URL"),
+					bundle.getString("DB_USER"),
+						bundle.getString("DB_PASS"))){
+			
 			String sql = "SELECT * FROM GOAL WHERE USRID=? ORDER BY GOALTIME DESC";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, users.getUsrId());
@@ -95,7 +104,11 @@ public class GoalDAO {
 	
 	public int deleteGoal(Goal goal) {
 		int result = 0;
-		try(Connection conn = DriverManager.getConnection(JDBC_URL,DB_USER,DB_PASS)) {
+		try(Connection conn = DriverManager.getConnection(
+				bundle.getString("JDBC_URL"),
+					bundle.getString("DB_USER"),
+						bundle.getString("DB_PASS"))){
+			
 			String sql = "DELETE FROM GOAL WHERE GOALID = ?";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, goal.getGoalId());
@@ -110,7 +123,11 @@ public class GoalDAO {
 	
 	public int updateGoal(Goal goal) {
 		int result = 0;
-		try(Connection conn = DriverManager.getConnection(JDBC_URL,DB_USER,DB_PASS)){
+		try(Connection conn = DriverManager.getConnection(
+				bundle.getString("JDBC_URL"),
+					bundle.getString("DB_USER"),
+						bundle.getString("DB_PASS"))){
+			
 			String sql = "UPDATE GOAL SET TEXT = ?, REMINDTIME = ? WHERE GOALID = ?";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, goal.getText());
