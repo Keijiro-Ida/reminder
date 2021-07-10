@@ -39,10 +39,12 @@ public class SignUpServlet extends HttpServlet { //新規登録s
 		String pass = request.getParameter("pass"); //入力パスワード1
 		String pass2 = request.getParameter("pass2"); //入力パスワード2
 		String time = request.getParameter("defTime"); //リマインド時刻設定
+		System.out.println(time);
 		mail.strip(); //空白を除く
 		if(pass.length() == 8 && 
 				pass.equals(pass2) && 
-					!(mail.equals("")) && time != null) { //入力に漏れがない場合
+					!(mail.equals("")) && 
+							time != null && !(time.equals(":"))) { //入力に漏れがない場合
 			LocalTime defTime = LocalTime.parse(time,DateTimeFormatter.ofPattern("HH:mm"));
 			SignUp signUp = new SignUp(mail, pass, defTime);
 			SignUpLogic bo = new SignUpLogic();

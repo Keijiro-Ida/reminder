@@ -20,9 +20,9 @@ public class GoalDAO {
 		int result = 0;
 		
 		try(Connection conn = DriverManager.getConnection(
-								bundle.getString("JDBC_URL_MYSQL"),
-									bundle.getString("DB_USER2"),
-										bundle.getString("DB_PASS2"))){
+								bundle.getString("JDBC_URL"),
+									bundle.getString("DB_USER"),
+										bundle.getString("DB_PASS"))){
 			
 			String sql = "INSERT INTO GOAL(USRID,TEXT,GOALTIME,REMINDTIME) VALUES(?, ?, ?, ?)";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
