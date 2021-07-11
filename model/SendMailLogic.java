@@ -17,14 +17,14 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class RemindLogic { //リマインド通知を行うクラス
+public class SendMailLogic { //リマインド通知を行うクラス
 	public Remind remind; //リマインド通知の情報
 	public ScheduledExecutorService service; //リマインド通知を送るスレッド
 	public ScheduledFuture<?> sf; //リマインド通知を送るスレッドの戻り値,キャンセルを行うためのインスタンス。
 	public static HashMap<String, ScheduledFuture<?>> map; //goalIDから、スレッドのキャンセルを行うためのmap
 	public static HashMap<String, ScheduledExecutorService> map2;
 	
-	public RemindLogic(Remind remind) {
+	public SendMailLogic(Remind remind) {
 		this.remind = remind;
 		service =  Executors.newSingleThreadScheduledExecutor();
 		}

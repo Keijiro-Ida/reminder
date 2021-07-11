@@ -12,7 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import model.DeleteGoalLogic;
 import model.Goal;
-import model.RemindLogic;
+import model.SendMailLogic;
 
 /**
  * Servlet implementation class DeleteGoalServlet
@@ -30,9 +30,9 @@ public class DeleteGoalServlet extends HttpServlet { //設定した目標の削�
 		int result = bo.execute(goal);
 		if(result == 1) { //削除成功
 			
-			if(RemindLogic.map.get(goal.getGoalId()) != null) { //リマインド通知のキャンセル
-			RemindLogic.map.get(goal.getGoalId()).cancel(true);
-			RemindLogic.map2.get(goal.getGoalId()).shutdown();
+			if(SendMailLogic.map.get(goal.getGoalId()) != null) { //リマインド通知のキャンセル
+			SendMailLogic.map.get(goal.getGoalId()).cancel(true);
+			SendMailLogic.map2.get(goal.getGoalId()).shutdown();
 			}
 	
 		response.sendRedirect("/reminder/GetGoalListServlet");

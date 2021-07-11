@@ -19,7 +19,7 @@ import model.Goal;
 import model.PostGoal;
 import model.PostGoalLogic;
 import model.Remind;
-import model.RemindLogic;
+import model.SendMailLogic;
 import model.Users;
 
 /**
@@ -74,7 +74,7 @@ public class MainServlet extends HttpServlet { //メイン画面
 			if(goal != null) { //目標の登録成功時
 				//リマインド通知の設定
 				Remind remind = new Remind(goal.getGoalId(), users.getMail(), text, remindTime); 
-				RemindLogic bo2 = new RemindLogic(remind);
+				SendMailLogic bo2 = new SendMailLogic(remind);
 				bo2.execute();
 					
 				

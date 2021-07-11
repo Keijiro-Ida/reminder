@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSession;
 
 import model.Goal;
 import model.Remind;
-import model.RemindLogic;
+import model.SendMailLogic;
 import model.UpdateGoalLogic;
 import model.Users;
 
@@ -82,17 +82,17 @@ public class UpdateGoalServlet extends HttpServlet { //目標の更新
 			if(result == 1) { //更新成功
 					//remindの再設定
 				
-				if(RemindLogic.map.get(goal.getGoalId()) != null) { //リマインド通知のキャンセルと再設定
+				if(SendMailLogic.map.get(goal.getGoalId()) != null) { //リマインド通知のキャンセルと再設定
 
-					RemindLogic.map.get(goal.getGoalId()).cancel(true); //スレッドのキャンセル
-					RemindLogic.map2.get(goal.getGoalId()).shutdown(); //スレッド閉鎖
+					SendMailLogic.map.get(goal.getGoalId()).cancel(true); //スレッドのキャンセル
+					SendMailLogic.map2.get(goal.getGoalId()).shutdown(); //スレッド閉鎖
 					Remind remind = new Remind(goal.getGoalId(),users.getMail(), text, remindTime);
-					RemindLogic bo3 = new RemindLogic(remind);
+					SendMailLogic bo3 = new SendMailLogic(remind);
 					bo3.execute();
 					response.sendRedirect("/reminder/GetGoalListServlet");
 				} else { //サーバー電源オフなどでスレッドキャンセルされていたとき
 					Remind remind = new Remind(goal.getGoalId(),users.getMail(), text, remindTime);
-					RemindLogic bo3 = new RemindLogic(remind);
+					SendMailLogic bo3 = new SendMailLogic(remind);
 					bo3.execute();
 						
 					response.sendRedirect("/reminder/GetGoalListServlet");

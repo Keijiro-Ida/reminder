@@ -3,7 +3,7 @@ package test;
 import java.sql.Timestamp;
 
 import model.Remind;
-import model.RemindLogic;
+import model.SendMailLogic;
 
 public class SendMailTest {
 
@@ -12,9 +12,9 @@ public class SendMailTest {
 		
 		Remind remind = new Remind("1","idatt1122@gmail.com", "2英語"
 				+ "", time);
-		RemindLogic bo = new RemindLogic(remind);
+		SendMailLogic bo = new SendMailLogic(remind);
 		bo.execute();
-		RemindLogic.map.get("1").cancel(true);
+		SendMailLogic.map.get("1").cancel(true);
 	}
 
 }
