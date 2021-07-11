@@ -22,6 +22,7 @@ public class RemindLogic { //リマインド通知を行うクラス
 	public ScheduledExecutorService service; //リマインド通知を送るスレッド
 	public ScheduledFuture<?> sf; //リマインド通知を送るスレッドの戻り値,キャンセルを行うためのインスタンス。
 	public static HashMap<String, ScheduledFuture<?>> map; //goalIDから、スレッドのキャンセルを行うためのmap
+	public static HashMap<String, ScheduledExecutorService> map2;
 	
 	public RemindLogic(Remind remind) {
 		this.remind = remind;
@@ -64,14 +65,16 @@ public class RemindLogic { //リマインド通知を行うクラス
 			};
 			Timestamp now = new Timestamp(System.currentTimeMillis()); //現在時刻
 			long time = remind.getRemindTime().getTime() - now.getTime(); //リマインド時刻と現在時刻の差分
-			try {
 				sf = service.schedule(task1, time, TimeUnit.MILLISECONDS); //リマインドを設定
+				
 				if(map == null) { //mapが生成されていないときに、map生成
 					map = new HashMap<String, ScheduledFuture<?>>();
 				}
+				if(map2 == null) {
+					map2 = new HashMap<String, ScheduledExecutorService>();
+				}
 				map.put(remind.getGoalId(), sf); //キャンセルを行う時のための格納
-			} finally {
-			if(service != null) service.shutdown(); //スレッド終了
-		}
+				map2.put(remind.getGoalId(), service);
+			
 		}
 }

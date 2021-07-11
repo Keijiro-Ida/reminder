@@ -32,9 +32,9 @@ public class DeleteGoalServlet extends HttpServlet { //設定した目標の削�
 			
 			if(RemindLogic.map.get(goal.getGoalId()) != null) { //リマインド通知のキャンセル
 			RemindLogic.map.get(goal.getGoalId()).cancel(true);
-		
+			RemindLogic.map2.get(goal.getGoalId()).shutdown();
 			}
-			
+	
 		response.sendRedirect("/reminder/GetGoalListServlet");
 		} else if( result == 0){ //削除失敗
 			request.setAttribute("errorMsg", "更新に失敗しました。");

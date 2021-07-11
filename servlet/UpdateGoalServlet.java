@@ -84,8 +84,8 @@ public class UpdateGoalServlet extends HttpServlet { //目標の更新
 				
 				if(RemindLogic.map.get(goal.getGoalId()) != null) { //リマインド通知のキャンセルと再設定
 
-					RemindLogic.map.get(goal.getGoalId()).cancel(true);
-					
+					RemindLogic.map.get(goal.getGoalId()).cancel(true); //スレッドのキャンセル
+					RemindLogic.map2.get(goal.getGoalId()).shutdown(); //スレッド閉鎖
 					Remind remind = new Remind(goal.getGoalId(),users.getMail(), text, remindTime);
 					RemindLogic bo3 = new RemindLogic(remind);
 					bo3.execute();
